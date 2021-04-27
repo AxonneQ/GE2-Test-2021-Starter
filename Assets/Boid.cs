@@ -96,6 +96,7 @@ public class Boid : MonoBehaviour
         Vector3 newAcceleration = force / mass;
         acceleration = Vector3.Lerp(acceleration, newAcceleration, Time.deltaTime);
         velocity += acceleration * Time.deltaTime;
+        velocity = new Vector3(velocity.x, 0, velocity.z);
 
         velocity = Vector3.ClampMagnitude(velocity, maxSpeed);
 
