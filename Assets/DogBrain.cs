@@ -19,8 +19,6 @@ class FindBallState : State {
                     brain.targetBall = ball;
                 }
             }
-
-            //Debug.Log(owner.GetComponent<Arrive>().targetGameObject);
         }
     }
 
@@ -55,15 +53,45 @@ class GetBallState : State {
     public override void Think()
     {
         // Change condition
-        if (brain.targetBall != null)
+        if (Vector3.Distance(brain.targetBall.transform.position, owner.transform.position) > 1)
         {
             owner.GetComponent<StateMachine>().ChangeState(new GetBallState());
-        } 
+        } else {
+            brain.hasBall = true;
+            owner.GetComponent<StateMachine>().ChangeState(new ReturnBallState());
+        }
     }
 }
 
 class ReturnBallState : State {
+    DogBrain brain;
+    
+    public override void Enter()
+    {
+        brain = owner.GetComponent<DogBrain>();
 
+        brain.targetBall.transform.position = owner.transform.position + new Vector3(0, 0, 1);
+
+        owner.GetComponent<Arrive>().targetPosition = brain.player.transform.position;
+        owner.GetComponent<Arrive>().enabled = true;    
+    }
+    public override void Exit()
+    {
+        owner.GetComponent<Arrive>().enabled = false;
+    }
+
+    public override void Think()
+    {
+        // Change condition
+        if (Vector3.Distance(brain.targetBall.transform.position, brain.player.transform.position) < brain.dropRange)
+        {
+            owner.GetComponent<Arrive>().enabled = false;
+            brain.targetBall = null;
+            owner.GetComponent<StateMachine>().ChangeState(new FindBallState());
+        } else {
+            owner.GetComponent<StateMachine>().ChangeState(new ReturnBallState());
+        }
+    }
 }
 
 public class DogBrain : MonoBehaviour
