@@ -28,8 +28,6 @@ public class Throw : MonoBehaviour
         StartCoroutine(ThrowingCoroutine());
     }
 
-    bool shooting = false;
-
     System.Collections.IEnumerator ThrowingCoroutine()
     {
         while(true)
